@@ -1,7 +1,10 @@
 """ TODO """
+
+# Reference: https://huggingface.co/spaces/fisherman611/gaia-agent/blob/main/agent.py
+
 import os
 import json
-from gaia_agent import gaia_agent
+from agents.gaia_agent import gaia_agent
 from gaia_data_api import get_questions, post_gaia_answers
 
 # Load the local environment configuration
@@ -28,7 +31,8 @@ def main():
     answer_agent = gaia_agent()
 
     temp_list = [
-        "3cef3a44-215e-4aed-8e3b-b1e3f08063b7"
+        "8e867cd7-cff9-4e6c-867a-ff5ddc2550be",
+        "4fc2f1ae-8625-45b5-ab34-ad4433bc21f8"
     ]
 
     for question in questions_data:

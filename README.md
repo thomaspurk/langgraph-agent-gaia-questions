@@ -12,3 +12,14 @@ source .venv/bin/activate
 pip install -r requirements.txt
 pip install -r requirements-dev.txt
 ```
+
+## Tools
+
+- Wiki Lookup
+- RAG - Web Search Retreiver
+- Image processing
+- Video Processing
+- Audio Processing
+- XLSX Processng
+- Coding Agent
+- Think Act Observe
