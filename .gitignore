@@ -1,3 +1,7 @@
+# Don't add answer data to the repor
+answers/
+answers.json
+
 # Environments
 .env
 .env.*

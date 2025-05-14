@@ -5,10 +5,7 @@ import os
 import json
 
 
-username = os.environ.get("USER_NAME")
-hf_token = os.environ.get("HUGGINGFACEHUB_API_TOKEN")
 default_api_url = os.environ.get("DEFAULT_API_URL")
-agent_code = os.environ.get("AGENT_CODE")
 
 questions_file_path = 'data/questions.json'
 

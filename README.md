@@ -23,3 +23,13 @@ pip install -r requirements-dev.txt
 - XLSX Processng
 - Coding Agent
 - Think Act Observe
+
+| \*  | a   | b   | c   | d   | e   |
+| --- | --- | --- | --- | --- | --- |
+| a   | a   | b   | c   | b   | d   |
+| b   | b   | c   | a   | e   | c   |
+| c   | c   | a   | b   | b   | a   |
+| d   | b   | e   | b   | e   | d   |
+| e   | d   | b   | a   | d   | c   |
+
+/Applications/Python\ 3.13/Install\ Certificates.command

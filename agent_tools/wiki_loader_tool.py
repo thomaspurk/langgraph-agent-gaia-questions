@@ -1,9 +1,7 @@
-from langchain_community.document_loaders import WikipediaLoader
+from langchain_community.document_loaders.wikipedia import WikipediaLoader
 from langchain.tools import Tool
 
-#search_docs = 
-
-def _load(query: str) -> dict:
+def _wiki_load(query: str) -> dict:
     """Find Wikipedia document based on the query.
 
         Args:
@@ -14,18 +12,12 @@ def _load(query: str) -> dict:
     """
     search_docs = WikipediaLoader(query=query, load_max_docs=1).load()
 
-    formatted_search_docs = "\n\n---\n\n".join(
-        [
-            f'<Document source="{doc.metadata["source"]}" page="{doc.metadata.get("page", "")}"/>\n{doc.page_content}\n</Document>'
-            for doc in search_docs
-        ]
-    )
-    return {"context": formatted_search_docs}
+    return {"messages": search_docs}
 
 
 # Initialize the tool
 wiki_loader_tool = Tool(
-    name="Wikipedia Page Loader",
-    func=_load,
+    name="wikipedia_page_loader",
+    func=_wiki_load,
     description="Use this tool to retreive content from a Wikipedia page to use for addition context needed to answer a question."
 )

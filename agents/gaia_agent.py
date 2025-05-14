@@ -2,15 +2,23 @@
 
 import os
 from typing import TypedDict, Annotated
+
 from langgraph.graph.message import add_messages
 from langgraph.graph import MessagesState, START, StateGraph
 from langgraph.prebuilt import ToolNode
 from langgraph.prebuilt import tools_condition
+
+from langchain.chat_models import init_chat_model
 from langchain_core.messages import AnyMessage, HumanMessage, AIMessage
 from langchain_huggingface import HuggingFaceEndpoint, ChatHuggingFace
 
-from agent_tools.web_search_tool import search_tool
+from agent_tools.web_search_tool import web_search_tool
 from agent_tools.wiki_loader_tool import wiki_loader_tool
+from agent_tools.python_runner_tool import python_runner_tool
+from agent_tools.image_data_from_url_tool import image_data_from_url
+from agent_tools.dataframe_from_url_tool import dataframe_from_url
+from agent_tools.sum_excel_column_tool import sum_excel_column
+from agent_tools.audio_transcript_from_url_tool import audio_transcription_from_url
 
 
 class gaia_agent:
@@ -21,26 +29,24 @@ class gaia_agent:
         self.graph_builder = StateGraph(MessagesState)
 
         # Generate the chat interface, including the tools
-        chat_llm = HuggingFaceEndpoint(
-            repo_id=os.environ.get("CHAT_MODEL"),
-            huggingfacehub_api_token=os.environ.get("HUGGINGFACEHUB_API_TOKEN"),
-        )
+        chat_model = init_chat_model(os.environ.get("CHAT_MODEL"))
 
-        chat_model = ChatHuggingFace(
-            llm=chat_llm, 
-            verbose=True
-        )
         tools = [
-            search_tool,
+            web_search_tool,
             wiki_loader_tool,
-            ]
+            python_runner_tool,
+            image_data_from_url,
+            dataframe_from_url,
+            sum_excel_column,
+            audio_transcription_from_url
+        ]
         chat_model_with_tools = chat_model.bind_tools(tools)
 
         
         # Define nodes: these do the work
         # chat_node to process the question
         def chat_node(state: MessagesState) -> dict:
-            """ Formates an LLM response to the current AgentState message."""
+            """ Formates an LLM response to the current MessageState message."""
             return {
                 "messages": [chat_model_with_tools.invoke(state["messages"])],
             }
@@ -80,22 +86,23 @@ class gaia_agent:
         )
 
         # Compile the Agent
-        self.graph_builder = self.graph_builder.compile()
+        self.graph = self.graph_builder.compile()
     
     def __call__(self, content: str) -> str:
         """ Send request to the alfred agent."""
 
         content_plus = f"""You are an AI Agent who uses tools to help provide accurate and concise answers. I will ask you a question. Your final answer should be a number OR as few words as possible OR a comma separated list of numbers and/or strings. If you are asked for a number, don't use comma to write your number neither use units such as $ or percent sign unless specified otherwise. If you are asked for a string, don't use articles, neither abbreviations (e.g. for cities), and write the digits in plain text unless specified otherwise. If you are asked for a comma separated list, apply the above rules depending of whether the element to be put in the list is a number or a string.
 
-        You can look up the definition of technical terms using a web search to help you get
-        information needed to answer questions. Take your time and a follow all instructions given in the quesiton.
-        
         Question:{content}""" 
 
-        input_dict = {"messages": [HumanMessage(content=content_plus)]}
-        # response = self.graph_builder.invoke(input_dict)['messages'][-1].content
+        messages = [HumanMessage(content=content_plus)]
+        # messages = self.graph.invoke({"messages": messages})
+        # for m in messages["messages"]:
+        #     m.pretty_print()
+        # response = messages["messages"][-1].content
+
         response = None
-        for chunk in self.graph_builder.stream(input_dict):
+        for chunk in self.graph.stream({"messages": messages}):
             for node, update in chunk.items():
                print( update_reporter(node,update))
                response = update["messages"][-1].content

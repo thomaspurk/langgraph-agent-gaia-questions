@@ -1,10 +1,9 @@
 datasets
 langchain
 langchain_community
-duckduckgo-search
-wikipedia
-langchain_huggingface
+langchain-openai
+langchain-tavily
 langgraph
-llama-index-retrievers-bm25
-rank-bm25
-faiss-cpu
+wikipedia
+openpyxl
+openai-whisper
