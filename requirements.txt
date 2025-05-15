@@ -7,3 +7,6 @@ langgraph
 wikipedia
 openpyxl
 openai-whisper
+pytube
+python-dotenv
+pytest

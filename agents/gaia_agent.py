@@ -1,7 +1,7 @@
 """ TODO """
 
 import os
-from typing import TypedDict, Annotated
+import time
 
 from langgraph.graph.message import add_messages
 from langgraph.graph import MessagesState, START, StateGraph
@@ -19,6 +19,11 @@ from agent_tools.image_data_from_url_tool import image_data_from_url
 from agent_tools.dataframe_from_url_tool import dataframe_from_url
 from agent_tools.sum_excel_column_tool import sum_excel_column
 from agent_tools.audio_transcript_from_url_tool import audio_transcription_from_url
+from agent_tools.youtube_transcript_from_url_tool import youtube_transcription_from_url
+
+# Some LLM API rate limits can be reached if answering all questions at once.
+# Pause a number of seconds after each tool call invoked by the conditional edge
+rate_limit_pause = 10 # 10 = 10,000 milliseconds
 
 
 class gaia_agent:
@@ -38,7 +43,8 @@ class gaia_agent:
             image_data_from_url,
             dataframe_from_url,
             sum_excel_column,
-            audio_transcription_from_url
+            audio_transcription_from_url,
+            youtube_transcription_from_url
         ]
         chat_model_with_tools = chat_model.bind_tools(tools)
 
@@ -47,6 +53,10 @@ class gaia_agent:
         # chat_node to process the question
         def chat_node(state: MessagesState) -> dict:
             """ Formates an LLM response to the current MessageState message."""
+
+            # Hacky workaround to rate limit issues. Add a little pause each time
+            # the llm is called to hopefully avoid the limit.
+            time.sleep(rate_limit_pause)
             return {
                 "messages": [chat_model_with_tools.invoke(state["messages"])],
             }
@@ -92,6 +102,8 @@ class gaia_agent:
         """ Send request to the alfred agent."""
 
         content_plus = f"""You are an AI Agent who uses tools to help provide accurate and concise answers. I will ask you a question. Your final answer should be a number OR as few words as possible OR a comma separated list of numbers and/or strings. If you are asked for a number, don't use comma to write your number neither use units such as $ or percent sign unless specified otherwise. If you are asked for a string, don't use articles, neither abbreviations (e.g. for cities), and write the digits in plain text unless specified otherwise. If you are asked for a comma separated list, apply the above rules depending of whether the element to be put in the list is a number or a string.
+
+        Think through and follow all instructions carefully. Pay close attention to the formatting instructions.
 
         Question:{content}""" 
 

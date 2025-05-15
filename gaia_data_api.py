@@ -60,7 +60,22 @@ def fetch_gaia_questions() -> list:
     except Exception as e:
         print(f"An unexpected error occurred fetching questions: {e}")
         return f"An unexpected error occurred fetching questions: {e}", None
-
+    
+def get_answers(answers_file_path) -> list | str:
+    """ TODO """
+    # Load answers.json file if it exists
+    if os.path.exists(answers_file_path):
+        print("STATUS: Reading answsers data from file.")
+        try:
+            with open(answers_file_path, 'r') as file:
+                return json.load(file) # Happy Path
+        except json.JSONDecodeError:
+            return f"Could not decode JSON from {answers_file_path}. The file might be empty or contain invalid JSON."
+        except Exception as e:
+            return f"An error occurred: {e}"
+    else:
+        return []
+    
 def post_gaia_answers(answers_payload) -> str:
     """ Posts the answers and returns a status message"""
 

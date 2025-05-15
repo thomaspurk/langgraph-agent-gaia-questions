@@ -1,7 +1,6 @@
 """ 
     TODO - This could be refactored as a class
 """
-import os
 from langchain.tools import Tool
 from langchain_tavily import TavilySearch
 

@@ -1,6 +1,6 @@
 # Don't add answer data to the repor
-answers/
-answers.json
+data/answers/*
+data/answers.json
 
 # Environments
 .env
