@@ -1,3 +1,8 @@
+# Description: A LangGraph Agent Tool for converting an XLSX file to a Pandas JSON string.
+# Author: Thomas Purk
+# Date: 2025-05-15
+# Reference: https://pandas.pydata.org/docs/reference/api/pandas.read_excel.html
+
 from langchain.tools import Tool
 import io
 import requests
@@ -10,7 +15,7 @@ def _prepare_dataframe(url: str) -> dict:
             url (str): The path to a file containing the excel file.
         
         Returns:
-            dict: Contains a string of image data.
+            dict: Contains a string of spreadsheet data.
     """
 
     try:

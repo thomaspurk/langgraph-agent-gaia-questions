@@ -1,3 +1,8 @@
+# Description: A LangGraph Agent Tool for executing Python code contained in a string.
+# Author: Thomas Purk
+# Date: 2025-05-15
+# Reference: https://tutorialreference.com/python/examples/faq/python-how-to-redirect-stdout-to-variable
+
 from langchain.tools import Tool
 import contextlib
 import io

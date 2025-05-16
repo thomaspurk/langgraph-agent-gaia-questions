@@ -1,3 +1,9 @@
+# Description: A LangGraph Agent Tool downloading an image and converting it to a string.
+# Author: Thomas Purk
+# Date: 2025-05-15
+# Reference: https://developer.mozilla.org/en-US/docs/Web/URI/Reference/Schemes/data
+# Reference: https://github.com/openai/openai-python?tab=readme-ov-file#vision
+
 from langchain.tools import Tool
 import io
 import requests

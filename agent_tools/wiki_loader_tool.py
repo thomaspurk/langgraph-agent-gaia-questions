@@ -1,3 +1,8 @@
+# Description: A LangGraph Agent Tool loading Wikipedia Pages.
+# Author: Thomas Purk
+# Date: 2025-05-15
+# Reference: https://python.langchain.com/docs/integrations/tools/wikipedia/
+
 from langchain_community.document_loaders.wikipedia import WikipediaLoader
 from langchain.tools import Tool
 

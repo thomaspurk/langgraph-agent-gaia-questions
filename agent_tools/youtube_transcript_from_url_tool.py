@@ -1,3 +1,9 @@
+# Description: A LangGraph Agent Tool for converting audio into text.
+# Author: Thomas Purk
+# Date: 2025-05-15
+# Reference: https://pypi.org/project/openai-whisper/
+# Reference: https://pypi.org/project/pytube/
+
 from langchain.tools import Tool
 import whisper
 import tempfile
@@ -7,7 +13,7 @@ def _prepare_audio(url: str) -> dict:
     """ Prepares an audio transcript for use by an LLM for question answering
 
         Args:
-            url (str): The path to a file containing the audio.
+            url (str): The url of the YouTube video containing the audio.
         
         Returns:
             dict: Contains a string of audio data.

@@ -1,3 +1,8 @@
+# Description: A LangGraph Agent Tool for executing Python code contained in a string.
+# Author: Thomas Purk
+# Date: 2025-05-15
+# Reference: https://pandas.pydata.org/docs/reference/api/pandas.Series.html
+
 from langchain.tools import Tool
 import json
 import pandas

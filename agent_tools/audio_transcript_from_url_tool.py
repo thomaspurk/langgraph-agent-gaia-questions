@@ -1,3 +1,8 @@
+# Description: A LangGraph Agent Tool for converting audio into text.
+# Author: Thomas Purk
+# Date: 2025-05-15
+# Reference: https://pypi.org/project/openai-whisper/
+
 from langchain.tools import Tool
 import io
 import requests

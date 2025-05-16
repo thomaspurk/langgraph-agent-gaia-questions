@@ -1,15 +1,25 @@
-""" TODO """
+# Description: A set of functions for interacting with Hugging Face's GAIA API
+# Author: Thomas Purk
+# Date: 2025-05-15
+# Reference: https://huggingface.co/learn/agents-course/unit4/hands-on
 
 import requests
 import os
 import json
 
-
+# Set up environment variables
 default_api_url = os.environ.get("DEFAULT_API_URL")
+username = os.environ.get("USER_NAME")
+agent_code = os.environ.get("AGENT_CODE")
 
 questions_file_path = 'data/questions.json'
 
 def get_questions() -> list | str:
+    """ Opens the questions.json file if it exists. If not, loads the questions from the API and saves them to file.
+    
+        Returns:
+            list | str: A collection of dict objects which define the parameters of each question. If an error occurs, returns the error message.
+    """
 
     if os.path.exists(questions_file_path):
         
@@ -28,7 +38,11 @@ def get_questions() -> list | str:
         return fetch_gaia_questions()
 
 def fetch_gaia_questions() -> list:
-    """ TODO """
+    """ Loads the questions from the API and saves them to file.
+    
+        Returns:
+            list | str: A collection of dict objects which define the parameters of each question. If an error occurs, returns the error message.
+    """
 
     questions_url = f"{default_api_url}/questions"
     print(f"Fetching questions from: {questions_url}")
@@ -62,7 +76,11 @@ def fetch_gaia_questions() -> list:
         return f"An unexpected error occurred fetching questions: {e}", None
     
 def get_answers(answers_file_path) -> list | str:
-    """ TODO """
+    """ Loads the answers from file if the file exists.
+    
+        Returns:
+            list | str: A collection of dict objects which define the parameters of each answer so far. If an error occurs, returns the error message.
+    """
     # Load answers.json file if it exists
     if os.path.exists(answers_file_path):
         print("STATUS: Reading answsers data from file.")
@@ -77,7 +95,14 @@ def get_answers(answers_file_path) -> list | str:
         return []
     
 def post_gaia_answers(answers_payload) -> str:
-    """ Posts the answers and returns a status message"""
+    """ Posts the answers and returns a status message.
+    
+        Args:
+            answers_payload (list): A collection of dict objects which define the parameters of each answer being submitted.
+        
+        Returns:
+            str: A status message.
+    """
 
     submit_url = f"{default_api_url}/submit"
 

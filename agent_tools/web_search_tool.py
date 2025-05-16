@@ -1,6 +1,8 @@
-""" 
-    TODO - This could be refactored as a class
-"""
+# Description: A LangGraph Agent Tool for getting results from a Web Search.
+# Author: Thomas Purk
+# Date: 2025-05-15
+# Reference: https://python.langchain.com/docs/integrations/tools/tavily_search/
+
 from langchain.tools import Tool
 from langchain_tavily import TavilySearch
 
@@ -11,7 +13,14 @@ _web_searcher = TavilySearch(
 
 
 def _web_search(query: str) -> dict:
-    """TODO"""
+    """ Searches the web for the input string
+
+        Args:
+            query (str): The content of the web search query.
+        
+        Returns:
+            dict: The parameters defining the search query and results.
+    """
     result = _web_searcher.invoke(query)
     return {"messages": result}
 
