@@ -10,14 +10,15 @@ load_dotenv(".env.development.local")
 
 import os
 import json
-import time
 from agents.gaia_agent import gaia_agent
-from data.gaia_data_api import get_questions, post_gaia_answers
+from utils.gaia_data_api import get_questions, post_gaia_answers
+from utils.utils import write_individual_answer
 
 # Set up environment variables
 default_api_url = os.environ.get("DEFAULT_API_URL")
-answers_file_path = 'data/answers.json'
-answers_folder_path = 'data/answers/'
+answers_file_path = 'src/data/answers.json'
+answers_folder_path = 'src/data/answers/'
+questions_file_path = 'src/data/questions.json'
 
 # Exclude questions so you can deal with a subset for debugging
 # Comment out questions in this list.
@@ -48,7 +49,7 @@ def main():
     """ The main execution entry point for this application. """
 
     # Get the list of questions to ask the agent
-    questions_data = get_questions()
+    questions_data = get_questions(questions_file_path)
 
     if type(questions_data) != list:
         print(f"STATUS: Questions Data not a list {type(questions_data)}")
@@ -84,7 +85,8 @@ def main():
     with open(answers_file_path, 'w', encoding='utf-8') as answers_file: # overwrite
         json.dump(answers_payload, answers_file, ensure_ascii=False, indent=4)
     
-    post_gaia_answers(answers_payload=answers_payload)
+    # Uncomment to post and score answsers.
+    #post_gaia_answers(answers_payload=answers_payload)
 
 
 def ask_question(question: dict, agent: gaia_agent) -> dict:
@@ -127,29 +129,11 @@ def ask_question(question: dict, agent: gaia_agent) -> dict:
             submitted_answer = f"ERROR: Running agent on task {task_id}: {e}"
 
         # Save the answer in the unofficial "answers" folder.
-        write_individual_answer(question.copy(), submitted_answer)
+        write_individual_answer(question.copy(), submitted_answer, answers_folder_path)
 
     return {"task_id": task_id, "submitted_answer": submitted_answer}
 
 
-def write_individual_answer(question: dict, answer: str):
-    """ Creates a tracking file for each answer.
-     
-        Args:
-            question (dict): A set of parameters defining the question.
-            answer (str): The text answer to the question.
-    """
-
-    try:
-        answer_file_path = f"{answers_folder_path}{question["task_id"]}.json"
-        question['answer'] = answer
-
-        # write data to file
-        with open(answer_file_path, 'w', encoding='utf-8') as answers_file:
-            json.dump(question, answers_file, ensure_ascii=False, indent=4)
-
-    except Exception as e:
-        raise e 
 
 
 # Execute

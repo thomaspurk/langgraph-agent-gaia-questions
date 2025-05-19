@@ -23,6 +23,7 @@ from agent_tools.dataframe_from_url_tool import dataframe_from_url
 from agent_tools.sum_excel_column_tool import sum_excel_column
 from agent_tools.audio_transcript_from_url_tool import audio_transcription_from_url
 from agent_tools.youtube_transcript_from_url_tool import youtube_transcription_from_url
+from utils.utils import update_reporter
 
 # Some LLM API rate limits can be reached if answering all questions at once.
 # Hacky way to pause a number of seconds after each tool call invoked by the conditional edge
@@ -100,6 +101,8 @@ class gaia_agent:
 
         # Compile the Agent
         self.graph = self.graph_builder.compile()
+
+        self.graph.get_graph().draw_mermaid_png(output_file_path="src/data/gaia_agent.png")
     
     def __call__(self, content: str) -> str:
         """ Send request to the alfred agent."""
@@ -111,10 +114,6 @@ class gaia_agent:
         Question:{content}""" 
 
         messages = [HumanMessage(content=content_plus)]
-        # messages = self.graph.invoke({"messages": messages})
-        # for m in messages["messages"]:
-        #     m.pretty_print()
-        # response = messages["messages"][-1].content
 
         response = None
         for chunk in self.graph.stream({"messages": messages}):
@@ -124,34 +123,3 @@ class gaia_agent:
 
         return response
 
-def update_reporter(node: str, update: dict) -> str:
-    """ Format agent stream status update dicts as a string that is readable in a console out put.
-
-        Args:
-            node (str): The name of the execution node.
-            update (dict): A collection of parameters defining the update information.
-        
-        Returns:
-            str: A status string reading for printing to the console.
-    """
-
-    return_string = f"\n{'_' * 25} Update from node: {node}  {'_' * 25}"
-    # Assume one message per update
-    message = update["messages"][-1]
-
-    return_string += f"\n\n{'=' * 25} {type(message).__name__} {'=' * 25}"
-
-    if(
-        hasattr(message, "name") and
-        message.name != None
-    ):
-        return_string += f"\n\nName: {message.name}"
-
-    if hasattr(message, "content"):
-        return_string += f"\n\n{message.content[:500]}"
-    
-    if hasattr(message, "tool_calls"):
-        for tool_call in message.tool_calls:
-            return_string += f"\n{tool_call}"
-    
-    return return_string

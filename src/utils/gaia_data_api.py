@@ -12,14 +12,18 @@ default_api_url = os.environ.get("DEFAULT_API_URL")
 username = os.environ.get("USER_NAME")
 agent_code = os.environ.get("AGENT_CODE")
 
-questions_file_path = 'data/questions.json'
 
-def get_questions() -> list | str:
+
+def get_questions(questions_file_path) -> list | str:
     """ Opens the questions.json file if it exists. If not, loads the questions from the API and saves them to file.
+
+        Args:
+            questions_file_path (str): The path to a file where the question data will be saved.
     
         Returns:
             list | str: A collection of dict objects which define the parameters of each question. If an error occurs, returns the error message.
     """
+    questions_url = f"{default_api_url}/questions"
 
     if os.path.exists(questions_file_path):
         
@@ -35,17 +39,21 @@ def get_questions() -> list | str:
            return f"An error occurred: {e}"
     
     else:
-        return fetch_gaia_questions()
+        return fetch_gaia_questions(questions_file_path, questions_url)
 
-def fetch_gaia_questions() -> list:
+def fetch_gaia_questions(questions_file_path: str, questions_url: str) -> list:
     """ Loads the questions from the API and saves them to file.
+
+        Args:
+            questions_file_path (str): The path to a file where the question data will be saved.
+            questions_url (str): The path to the API service endpoint returning the questions data.
     
         Returns:
             list | str: A collection of dict objects which define the parameters of each question. If an error occurs, returns the error message.
     """
 
-    questions_url = f"{default_api_url}/questions"
     print(f"Fetching questions from: {questions_url}")
+
     try:
         response = requests.get(questions_url, timeout=15)
         response.raise_for_status()
@@ -57,43 +65,24 @@ def fetch_gaia_questions() -> list:
 
         if not questions_data:
              print("Fetched questions list is empty.")
-             return "Fetched questions list is empty or invalid format.", None
+             return "Fetched questions list is empty or invalid format."
         
         print(f"Fetched {len(questions_data)} questions.")
         return questions_data
 
     except requests.exceptions.RequestException as e:
         print(f"Error fetching questions: {e}")
-        return f"Error fetching questions: {e}", None
+        return f"Error fetching questions: {e}"
     
     except requests.exceptions.JSONDecodeError as e:
          print(f"Error decoding JSON response from questions endpoint: {e}")
          print(f"Response text: {response.text[:500]}")
-         return f"Error decoding server response for questions: {e}", None
+         return f"Error decoding server response for questions: {e}"
     
     except Exception as e:
         print(f"An unexpected error occurred fetching questions: {e}")
-        return f"An unexpected error occurred fetching questions: {e}", None
-    
-def get_answers(answers_file_path) -> list | str:
-    """ Loads the answers from file if the file exists.
-    
-        Returns:
-            list | str: A collection of dict objects which define the parameters of each answer so far. If an error occurs, returns the error message.
-    """
-    # Load answers.json file if it exists
-    if os.path.exists(answers_file_path):
-        print("STATUS: Reading answsers data from file.")
-        try:
-            with open(answers_file_path, 'r') as file:
-                return json.load(file) # Happy Path
-        except json.JSONDecodeError:
-            return f"Could not decode JSON from {answers_file_path}. The file might be empty or contain invalid JSON."
-        except Exception as e:
-            return f"An error occurred: {e}"
-    else:
-        return []
-    
+        return f"An unexpected error occurred fetching questions: {e}"
+       
 def post_gaia_answers(answers_payload) -> str:
     """ Posts the answers and returns a status message.
     
