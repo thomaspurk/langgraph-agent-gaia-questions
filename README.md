@@ -49,7 +49,7 @@ The GAIA questions are answered by a LangGraph agent which uses OpenAI GPT 4.1 m
 
 **Agent Diagram**
 
-![alt text](src/data/gaia_agent.png)
+![Agent Message Flow Diagram (Mermaid)](src/data/gaia_agent.png)
 
 ### Tools
 
